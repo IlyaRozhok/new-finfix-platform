@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: finfix-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5432:5432" # в проде убрать
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks: [finfix-network]
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: finfix-backend
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     NODE_ENV: ${NODE_ENV:-development}
+  #     POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+  #     POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  #     POSTGRES_DB: ${POSTGRES_DB:-app}
+  #     POSTGRES_USER: ${POSTGRES_USER:-app}
+  #     POSTFRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+  #     JWT_SECRET: ${APP_JWT_SECRET:?Set APP_JWT_SECRET in .env}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks: [finfix-network]
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./backend:/app
+  #     - /app/node_modules
+
+volumes:
+  postgres_data:
+
+networks:
+  finfix-network:
+    driver: bridge
