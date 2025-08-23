@@ -2,48 +2,75 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
 } from "typeorm";
-import { User } from "../users/user.entity";
 import { Category } from "../categories/category.entity";
+import { Installment } from "../installments/installment.entity";
+import { Debt } from "../debts/debt.entity";
+import { User } from "@/users/user.entity";
+
+export enum TransactionType {
+  INCOME = "income",
+  EXPENSE = "expense",
+  INSTALLMENT_PAYMENT = "installment_payment",
+  DEBT_PAYMENT = "debt_payment",
+  TRANSFER = "transfer",
+}
 
 @Entity("transactions")
+@Index("idx_transactions_user_date", ["userId", "occurredAt"])
 export class Transaction {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ name: "user_id", type: "uuid" })
   userId: string;
 
-  @Column()
-  categoryId: string;
-
-  @Column("decimal", { precision: 12, scale: 2 })
-  amount: number;
-
-  @Column({ type: "text", nullable: true })
-  description: string;
-
-  @Column({ type: "date" })
-  transactionDate: Date;
-
-  @Column()
-  type: "income" | "expense";
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => User, (user) => user.transactions)
-  @JoinColumn({ name: "userId" })
+  @ManyToOne(() => User, (u) => u.transactions, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" })
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.transactions)
-  @JoinColumn({ name: "categoryId" })
-  category: Category;
+  @Column({ type: "enum", enum: TransactionType, enumName: "transaction_type" })
+  type: TransactionType;
+
+  @Column({ name: "category_id", type: "uuid", nullable: true })
+  categoryId?: string | null;
+
+  @ManyToOne(() => Category, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "category_id" })
+  category?: Category | null;
+
+  @Column({ name: "installment_id", type: "uuid", nullable: true })
+  installmentId?: string | null;
+
+  @ManyToOne(() => Installment, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "installment_id" })
+  installment?: Installment | null;
+
+  @Column({ name: "debt_id", type: "uuid", nullable: true })
+  debtId?: string | null;
+
+  @ManyToOne(() => Debt, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "debt_id" })
+  debt?: Debt | null;
+
+  @Column({ type: "numeric", precision: 14, scale: 2 })
+  amount: string; // всегда положительное — знак задаётся type
+
+  @Index()
+  @Column({ name: "occurred_at", type: "timestamptz" })
+  occurredAt: Date;
+
+  @Column({ type: "text", nullable: true })
+  note?: string | null;
+
+  @CreateDateColumn({ name: "created_at", type: "timestamptz" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+  updatedAt: Date;
 }

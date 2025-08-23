@@ -5,7 +5,9 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { DebtsModule } from "./debts/debts.module";
-import { StatisticsModule } from "./statistics/statistics.module";
+import { RecurringExpensesModule } from "./recurring-expenses/recurring-expenses.module";
+import { RecurringIncomesModule } from "./recurring-incomes/recurring-incomes.module";
+import { InstallmentsModule } from "./installments/installments.module";
 
 @Module({
   imports: [
@@ -23,15 +25,19 @@ import { StatisticsModule } from "./statistics/statistics.module";
         password: configService.get<string>("POSTGRES_PASSWORD"),
         database: configService.get<string>("POSTGRES_DB"),
         entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        synchronize: configService.get<string>("NODE_ENV") === "development",
-        logging: configService.get<string>("NODE_ENV") === "development",
+        // synchronize: configService.get<string>("NODE_ENV") === "development",
+        synchronize: false,
+        autoLoadEntities: true,
       }),
     }),
     AuthModule,
     UsersModule,
     CategoriesModule,
     DebtsModule,
-    StatisticsModule,
+
+    RecurringExpensesModule,
+    RecurringIncomesModule,
+    InstallmentsModule,
   ],
 })
 export class AppModule {}

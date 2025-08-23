@@ -1,36 +1,84 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from "@/users/user.entity";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from "typeorm";
 
-@Entity('debts')
+export enum DebtType {
+  LOAN = "loan",
+  CREDIT_CARD = "credit_card",
+}
+
+@Entity("debts")
+@Index("idx_debts_user_active", ["userId"], { where: '"is_closed" = false' })
 export class Debt {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ name: "user_id", type: "uuid" })
   userId: string;
 
-  @Column()
-  title: string;
+  @ManyToOne(() => User, (u) => u.debts, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" })
+  user: User;
 
-  @Column('decimal', { precision: 12, scale: 2 })
-  amount: number;
-
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text" })
   description: string;
 
-  @Column({ type: 'date', nullable: true })
-  dueDate: Date;
+  @Column({
+    name: "debt_type",
+    type: "enum",
+    enum: DebtType,
+    enumName: "debt_type",
+  })
+  debtType: DebtType;
 
-  @Column({ default: false })
-  isPaid: boolean;
+  @Column({ name: "total_debt", type: "numeric", precision: 14, scale: 2 })
+  totalDebt: string; // для loan — начальный principal (для карты может быть 0)
 
-  @CreateDateColumn()
+  @Column({
+    name: "monthly_payment",
+    type: "numeric",
+    precision: 14,
+    scale: 2,
+    nullable: true,
+  })
+  monthlyPayment?: string | null; // если фикс платёж известен (loan)
+
+  @Column({
+    name: "interest_rate_monthly",
+    type: "numeric",
+    precision: 6,
+    scale: 3,
+    nullable: true,
+  })
+  interestRateMonthly?: string | null; // например 0.037 для 3.7%/мес
+
+  @Column({ name: "grace_period_days", type: "int", nullable: true })
+  gracePeriodDays?: number | null; // например 62 для карты
+
+  @Index()
+  @Column({ name: "start_date", type: "date" })
+  startDate: string;
+
+  @Column({ name: "statement_day", type: "smallint", nullable: true })
+  statementDay?: number | null;
+
+  @Column({ name: "due_day", type: "smallint", nullable: true })
+  dueDay?: number | null;
+
+  @Column({ name: "is_closed", type: "boolean", default: false })
+  isClosed: boolean;
+
+  @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
   updatedAt: Date;
-
-  @ManyToOne(() => User, user => user.debts)
-  @JoinColumn({ name: 'userId' })
-  user: User;
 }
