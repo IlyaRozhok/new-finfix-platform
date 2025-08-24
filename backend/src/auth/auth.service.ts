@@ -1,19 +1,15 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UsersService } from "../users/users.service";
-import { User } from "@/users/user.entity";
 import { GooglePayload } from "./strategies/types";
+import { CategoriesService } from "@/categories/categories.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private categoriesService: CategoriesService
   ) {}
 
   async googleAuth(googleUser: GooglePayload) {
@@ -22,6 +18,7 @@ export class AuthService {
     }
 
     const user = await this.usersService.upsertFromGoogle(googleUser);
+    await this.categoriesService.seedDefaults(user.id);
     const token = this.jwtService.sign({ sub: user.id, email: user.email });
 
     return {

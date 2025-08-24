@@ -7,23 +7,24 @@ import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
+import { CategoriesModule } from "@/categories/categories.module";
 
 @Module({
   imports: [
     ConfigModule,
-    PassportModule.register({ session: false, defaultStrategy: "google" }),
+    PassportModule.register({ session: false }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (cfg: ConfigService) => ({
         secret: cfg.get<string>("APP_JWT_SECRET"),
         signOptions: {
-          expiresIn: cfg.get<string>("JWT_EXPIRES_IN", "7d"),
+          expiresIn: cfg.get<string>("APP_JWT_EXPIRES_IN", "7d"),
         },
       }),
     }),
     UsersModule,
-    PassportModule,
+    CategoriesModule,
   ],
   providers: [AuthService, GoogleStrategy, JwtStrategy],
   controllers: [AuthController],

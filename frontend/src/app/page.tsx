@@ -1,14 +1,5 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import dollars from "@/public/images/dollars-login.jpeg";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import Image from "next/image";
 import { Landmark } from "lucide-react";
 

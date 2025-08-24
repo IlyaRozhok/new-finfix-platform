@@ -7,6 +7,8 @@ export const ENDPOINTS = {
     GOOGLE: "google",
     GOOGLE_CALLBACK: "google/callback",
     ME: "me",
+    LOGOUT: "logout",
+    CSRF: "csrf"
   },
 };
 

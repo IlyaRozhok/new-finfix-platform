@@ -12,17 +12,10 @@ import { Category } from "../categories/category.entity";
 import { Installment } from "../installments/installment.entity";
 import { Debt } from "../debts/debt.entity";
 import { User } from "@/users/user.entity";
-
-export enum TransactionType {
-  INCOME = "income",
-  EXPENSE = "expense",
-  INSTALLMENT_PAYMENT = "installment_payment",
-  DEBT_PAYMENT = "debt_payment",
-  TRANSFER = "transfer",
-}
+import { TransactionType } from "./types";
+import { DecimalTransformer } from "@/_utils/decimal.transformer";
 
 @Entity("transactions")
-@Index("idx_transactions_user_date", ["userId", "occurredAt"])
 export class Transaction {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -58,8 +51,13 @@ export class Transaction {
   @JoinColumn({ name: "debt_id" })
   debt?: Debt | null;
 
-  @Column({ type: "numeric", precision: 14, scale: 2 })
-  amount: string; // всегда положительное — знак задаётся type
+  @Column({
+    type: "numeric",
+    precision: 14,
+    scale: 2,
+    transformer: DecimalTransformer,
+  })
+  amount: string;
 
   @Index()
   @Column({ name: "occurred_at", type: "timestamptz" })
