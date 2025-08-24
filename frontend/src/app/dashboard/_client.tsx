@@ -1,13 +1,11 @@
 "use client";
 import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
 import { useAuth } from "@/hooks/use-auth";
+import { User } from "@/types";
 import Image from "next/image";
 
-export default function DashboardClient({ initialUser }: { initialUser: any }) {
+export default function DashboardClient({ initialUser }: { initialUser: User }) {
   const { user, logout } = useAuth();
-
-  // Опционально: проставить кэш React Query
-  // (можно сделать через dehydrate/hydrate, но MVP-ом это не обязательно)
 
   const effectiveUser = user ?? initialUser;
 
