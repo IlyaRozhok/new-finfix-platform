@@ -67,7 +67,7 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`FinFix API is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation: http://localhost:${port}/api/docs`);
+  console.log(`Swagger: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
