@@ -13,7 +13,7 @@ import { Installment } from "../installments/installment.entity";
 import { Debt } from "../debts/debt.entity";
 import { User } from "@/users/user.entity";
 import { TransactionType } from "./types";
-import { DecimalTransformer } from "@/_utils/decimal.transformer";
+import { DecimalTransformer } from "@/shared/decimal.transformer";
 
 @Entity("transactions")
 export class Transaction {

@@ -12,7 +12,7 @@ import { Response, Request } from "express";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
-import { ROUTE_SEGMENTS, ENDPOINTS, CLIENT_ROUTES } from "@/_utils/router";
+import { ROUTE_SEGMENTS, ENDPOINTS } from "@/shared/router";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtUser } from "./strategies/types";
 import { UsersService } from "@/users/users.service";
@@ -27,7 +27,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-    private readonly cfg: ConfigService
+    private readonly cfg: ConfigService,
   ) {}
 
   @Get(ENDPOINTS.AUTH.GOOGLE)
@@ -41,7 +41,7 @@ export class AuthController {
     const queryState = req.query?.["state"];
     if (!cookieState || !queryState || cookieState !== queryState) {
       return res.redirect(
-        `${process.env.FRONTEND_URL}/app/auth/callback?success=false&error=${encodeURIComponent("bad state")}`
+        `${process.env.FRONTEND_URL}/app/auth/callback?success=false&error=${encodeURIComponent("bad state")}`,
       );
     }
     res.clearCookie("oauth_state", { path: "/" });
@@ -54,13 +54,11 @@ export class AuthController {
       res.cookie(COOKIE_NAME, access_token, base);
       res.cookie("csrf", csrf, { ...base, httpOnly: false });
 
-      return res.redirect(
-        `${process.env.FRONTEND_URL}/${CLIENT_ROUTES.DASHBOARD}`
-      );
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
     } catch (error) {
       const msg = error?.message ?? "Authentication failed";
       return res.redirect(
-        `${process.env.FRONTEND_URL}/app/auth/callback?success=false&error=${encodeURIComponent(msg)}`
+        `${process.env.FRONTEND_URL}/app/auth/callback?success=false&error=${encodeURIComponent(msg)}`,
       );
     }
   }

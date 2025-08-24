@@ -1,5 +1,8 @@
+import { CATCH_WATERMARK } from "@nestjs/common/constants";
+
 export const ROUTE_SEGMENTS = {
   AUTH: "auth",
+  CATEGORIES: "categories",
 };
 
 export const ENDPOINTS = {
@@ -8,10 +11,9 @@ export const ENDPOINTS = {
     GOOGLE_CALLBACK: "google/callback",
     ME: "me",
     LOGOUT: "logout",
-    CSRF: "csrf"
+    CSRF: "csrf",
   },
-};
-
-export const CLIENT_ROUTES = {
-  DASHBOARD: "/dashboard",
+  CATEGORIES: {
+    ONBOARDING: "onboarding",
+  },
 };

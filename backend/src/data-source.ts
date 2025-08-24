@@ -1,7 +1,7 @@
 import "dotenv/config";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { envFileMap } from "./_utils/envFileMap";
+import { envFileMap } from "./shared/envFileMap";
 
 require("dotenv").config({
   path: envFileMap[process.env.NODE_ENV || "development"],

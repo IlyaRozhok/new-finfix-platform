@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import * as cookieParser from "cookie-parser";
 import helmet from "helmet";
-import { CsrfInterceptor } from "./_common/csrf.inerceptor";
+import { CsrfInterceptor } from "./common/csrf.inerceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +21,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-    })
+    }),
   );
   app.useGlobalInterceptors(new CsrfInterceptor());
 

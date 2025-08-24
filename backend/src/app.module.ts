@@ -9,7 +9,7 @@ import { RecurringExpensesModule } from "./recurring-expenses/recurring-expenses
 import { RecurringIncomesModule } from "./recurring-incomes/recurring-incomes.module";
 import { InstallmentsModule } from "./installments/installments.module";
 import { TransactionsModule } from "./transactions/transactions.module";
-import { envFileMap } from "./_utils/envFileMap";
+import { envFileMap } from "./shared/envFileMap";
 
 @Module({
   imports: [
