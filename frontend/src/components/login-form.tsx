@@ -19,7 +19,7 @@ export function LoginForm({
           variant="outline"
           className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-90"
         >
-          <a className={"flex"} href={`${API_URL}/auth/google`}>
+          <a className={"flex"} href={`${API_URL}/api/auth/google`}>
             <Image
               className="mr-3"
               priority={true}
@@ -28,7 +28,7 @@ export function LoginForm({
               width={20}
               height={20}
             />
-            Login with Google
+            Continue with Google
           </a>
         </Button>
       </div>

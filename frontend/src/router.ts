@@ -1,8 +1,9 @@
 export const ROUTES = {
   AUTH: {
-    ME: "/auth/me",
+    ME: "/api/auth/me",
     LOGIN: "/",
-    LOGOUT: "/auth/logout",
+    LOGOUT: "/api/auth/logout",
+    CSRF: "/api/auth/csrf",
   },
   DASHBOARD: {
     MAIN: "/dashboard",

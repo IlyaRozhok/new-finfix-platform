@@ -1,54 +1,28 @@
-"use client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import DashboardClient from "./_client";
+import type { User } from "@/lib/auth";
 
-import { useEffect, useState } from "react";
-import { apiGet } from "@/lib/api";
-import { User } from "@/types";
-import { ROUTES } from "@/router";
+function getBaseUrl(h: Headers): string {
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (!host) throw new Error("Host header is missing");
+  return `${proto}://${host}`;
+}
 
-import { ModeToggle } from "@/components/MoodToggle/MoodToggle";
-import { useRouter } from "next/navigation";
+export default async function Page() {
+  const h = headers();
+  const base = getBaseUrl(h);
 
-export default function AppPage() {
-  const [me, setMe] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const res = await fetch(`${base}/api/auth/me`, {
+    headers: { cookie: h.get("cookie") ?? "" },
+    cache: "no-store",
+  });
 
-  const router = useRouter();
-  useEffect(() => {
-    apiGet<User>(ROUTES.AUTH.ME)
-      .then(setMe)
-      .catch(() => router.push("/"));
-  }, []);
+  if (res.status === 401) {
+    redirect(`/login?next=${encodeURIComponent("/dashboard")}`);
+  }
 
-  if (!me) return <div className="p-6">Загрузка…</div>;
-
-  return (
-    <div className="p-6 flex items-center justify-between gap-4">
-      <div className="flex items-center">
-        {me.avatarUrl ? (
-          // если хочешь оптимизировать:
-          // <Image src={me.avatarUrl} alt="avatar" width={40} height={40} className="rounded-full" />
-          <img
-            src={me.avatarUrl}
-            alt="avatar"
-            className="w-10 h-10 rounded-full mr-3"
-          />
-        ) : null}
-
-        <div className="font-medium">{me.userName ?? "User"}</div>
-        {/* <div className="text-sm text-gray-500">{me.email}</div> */}
-      </div>
-
-      <div className="flex items-center">
-        <div className="mr-3">
-          <ModeToggle />
-        </div>
-        <a
-          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`}
-          className="ml-auto px-3 py-2 rounded-lg border"
-        >
-          Exit
-        </a>
-      </div>
-    </div>
-  );
+  const user = (await res.json()) as User;
+  return <DashboardClient initialUser={user} />;
 }

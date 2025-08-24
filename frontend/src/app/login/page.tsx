@@ -1,8 +1,21 @@
-import { GalleryVerticalEnd } from "lucide-react";
+"use client";
 
+import { useEffect, useState } from "react";
+import { GalleryVerticalEnd } from "lucide-react";
 import { LoginForm } from "@/components/login-form";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam));
+    }
+  }, [searchParams]);
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -14,6 +27,13 @@ export default function LoginPage() {
             FinFix Inc.
           </a>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-800 text-sm">{error}</p>
+          </div>
+        )}
+
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <LoginForm />
