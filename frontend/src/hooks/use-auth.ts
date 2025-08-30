@@ -1,4 +1,3 @@
-// /hooks/use-auth.ts (КЛИЕНТ)
 "use client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout, User } from "@/lib/auth";
@@ -17,7 +16,7 @@ export function useAuth() {
     mutationFn: logout,
     onSuccess: () => {
       qc.setQueryData(["me"], null);
-      // можно ещё router.replace("/login") из места, где вызываем logout
+      
     },
   });
 

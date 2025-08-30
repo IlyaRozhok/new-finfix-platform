@@ -111,7 +111,6 @@ export function useOnboardingStatus() {
   };
 }
 
-// Helper function to check if user needs onboarding (for server components)
 export function checkOnboardingRequired(userData?: any) {
   return !userData?.primaryCurrency;
 }
