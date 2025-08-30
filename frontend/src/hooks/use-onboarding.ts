@@ -96,7 +96,6 @@ export function useOnboarding(config?: OnboardingConfig): UseOnboardingReturn {
   };
 }
 
-// Helper hook for checking onboarding status in components
 export function useOnboardingStatus() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
 
